@@ -24,6 +24,8 @@ Future<Realm> initRealm = () async {
 }();
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Isolate.spawn((token) async {
     // for path_provider package
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
