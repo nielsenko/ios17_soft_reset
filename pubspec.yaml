@@ -5,12 +5,13 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   realm: ^1.5.0
+  path_provider: any
   cancellation_token: any
 
 dev_dependencies:
@@ -20,3 +21,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# ❯ git bisect bad
+# 1a17ba0e5e8d7ba07e7b612c89bb61545327d9be is the first bad commit

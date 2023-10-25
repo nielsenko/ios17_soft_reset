@@ -19,5 +19,5 @@ Ensure to use a realm ios17 device. Running on the simulator will no cause probl
 
 Running in release mode is not a problem:
 ```sh
-flutter run
+flutter run --release
 ```

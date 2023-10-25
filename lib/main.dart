@@ -1,6 +1,8 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart' as pp;
 import 'package:realm/realm.dart';
 
 part 'main.g.dart';
@@ -12,19 +14,32 @@ class _Stuff {
   late ObjectId id;
 }
 
-final realm = Realm(Configuration.local([Stuff.schema]));
+Future<Realm> initRealm = () async {
+  // don't trust realm to get path right in debug mode on iOS 17..
+  final dir = await pp.getApplicationDocumentsDirectory();
+  return Realm(Configuration.local(
+    [Stuff.schema],
+    path: '${dir.path}/my.realm',
+  ));
+}();
 
 Future<void> main() async {
-  Isolate.run(() {
+  Isolate.spawn((token) async {
+    // for path_provider package
+    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+
+    final realm = await initRealm;
     while (true) {
-      realm.write(() => realm.add(Stuff(ObjectId())));
+      await realm.writeAsync(() => realm.add(Stuff(ObjectId())));
     }
-  });
-  runApp(const MyApp());
+  }, ServicesBinding.rootIsolateToken!);
+
+  runApp(MyApp(realm: await initRealm));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Realm realm;
+  const MyApp({super.key, required this.realm});
 
   @override
   Widget build(BuildContext context) {
